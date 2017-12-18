@@ -8,23 +8,60 @@
 #             paularstrpo@gmail.com
 # ----------------------------------------------------------------------------
 
-ScriptHome=""
 
-mkdir -p ${ScriptHome}/bin
-ScriptHome=${ScriptHome}/bin
+mkdir -p $HOME/bin
+ScriptHome=$HOME/bin
 cd $ScriptHome
+
 # ----------------------------------------------------------------------------
-# 1. Burrows-Wheeler Aligner (BWA) - (http://bio-bwa.sourceforge.net/)
+# Versions
 # ----------------------------------------------------------------------------
+
 
 bwa_version="bwa-0.7.17"
+samtools_version="samtools-1.6"
+bcftools_version="bcftools-1.6"
+htslib_version="htslib-1.6"
+gatk_version="GenomeAnalysisTK-3.8-0"
+picard_version="2.16.0"
+
+
+# ----------------------------------------------------------------------------
+# GATK & PICARD
+# ----------------------------------------------------------------------------
+
+curl -L -O https://software.broadinstitute.org/gatk/download/${gatk_version}.tar.bz2
+curl -L https://github.com/broadinstitute/picard/releases/download/${picard_version}/picard.jar -O ${ScriptHome}/"picard-${picard_version}.jar"
+tar -vxjf ${gatk_version}.tar.bz2
+mv ${gatk_version}*/GenomeAnalysisTK.jar ${ScriptHome}/${gatk_version}.jar
+
+exit
+
+# ----------------------------------------------------------------------------
+# Download packages
+# ----------------------------------------------------------------------------
+
+
 curl -L -O https://sourceforge.net/projects/bio-bwa/files/${bwa_version}.tar.bz2
+curl -L -O https://github.com/samtools/samtools/releases/download/1.6/${samtools_version}.tar.bz2
+curl -L -O https://github.com/samtools/bcftools/releases/download/1.6/${bcftools_version}.tar.bz2
+curl -L -O https://github.com/samtools/htslib/releases/download/1.6/${htslib_version}.tar.bz2
 
 tar -xvf ${bwa_version}.tar.bz2
+tar -vxjf ${samtools_version}.tar.bz2
+tar -vxjf ${bcftools_version}.tar.bz2
+tar -vxjf ${htslib_version}.tar.bz2
+
+rm *.tar.*
+
+# ----------------------------------------------------------------------------
+# BWA
+# ----------------------------------------------------------------------------
+
+
 cd $bwa_version
 make
 
-BWA_PATH=${ScriptHome}/$bwa_version
 #find -name $BWA_PATH -type d -printf
 
 # git clone https://github.com/lh3/bwa.git
@@ -34,46 +71,8 @@ BWA_PATH=${ScriptHome}/$bwa_version
 # ./bwa mem ref.fa read1.fq read2.fq | gzip -3 > aln-pe.sam.gz
 
 # ----------------------------------------------------------------------------
-# 2. GenomeAnalysisTK (GATK) - (https://software.broadinstitute.org/gatk/)
+# Samtools, BCFtools & HTSlib - (http://www.htslib.org/)
 # ----------------------------------------------------------------------------
-cd ${ScriptHome}
-
-gatk_version="GenomeAnalysisTK-3.8-0"
-curl -L -O https://software.broadinstitute.org/gatk/download/${gatk_version}.tar.bz2
-
-tar -vxjf ${gatk_version}.tar.bz2
-
-mv ${gatk_version}*/GenomeAnalysisTK.jar ${ScriptHome}/${gatk_version}.jar
-GATK=${ScriptHome}/${gatk_version}.jar
-#find -name $GATK -printf
-
-# ----------------------------------------------------------------------------
-# 3. Picard Tools - (http://broadinstitute.github.io/picard/)
-# ----------------------------------------------------------------------------
-cd ${ScriptHome}
-picard_version="2.16.0"
-curl -L https://github.com/broadinstitute/picard/releases/download/${picard_version}/picard.jar -O ${ScriptHome}/"picard-${picard_version}.jar"
-tar -vxjf ${picard_version}.tar.bz2
-PICARD=${ScriptHome}/"picard-${picard_version}.jar"
-#find -name $PICARD -printf
-
-# ----------------------------------------------------------------------------
-# 4. Samtools, BCFtools & HTSlib - (http://www.htslib.org/)
-# ----------------------------------------------------------------------------
-cd ${ScriptHome}
-samtools_version="samtools-1.6"
-bcftools_version="bcftools-1.6"
-htslib_version="htslib-1.6"
-
-
-curl -L -O https://github.com/samtools/samtools/releases/download/1.6/${samtools_version}.tar.bz2
-curl -L -O https://github.com/samtools/bcftools/releases/download/1.6/${bcftools_version}.tar.bz2
-curl -L -O https://github.com/samtools/htslib/releases/download/1.6/${htslib_version}.tar.bz2
-
-tar -vxjf ${samtools_version}.tar.bz2
-tar -vxjf ${bcftools_version}.tar.bz2
-tar -vxjf ${htslib_version}.tar.bz2
-
 
 ./configure --prefix=${samtools_version}
 make
@@ -85,13 +84,14 @@ make
 make
 
 
-# ----------------------------------------------------------------------------
-# 5. Homebrew (MacOS only)
-# ----------------------------------------------------------------------------
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 # ----------------------------------------------------------------------------
-# 6. Circos (MacOS version)
+# Homebrew (MacOS only)
+# ----------------------------------------------------------------------------
+#/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+# ----------------------------------------------------------------------------
+# Circos (MacOS/local machine only)
 # ----------------------------------------------------------------------------
 #
 # #Install requisite perl libraries
