@@ -1,0 +1,173 @@
+# ----------------------------------------------------------------------------
+#         BASH PROFILE SETTINGS
+#             Paula Restrepo
+#             paularstrpo@gmail.com
+#             modified from https://natelandau.com/my-mac-osx-bash_profile/
+# ----------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------
+# TABLE OF CONTENTS
+# ----------------------------------------------------------------------------
+# 1. Customize Terminal
+#   A) Make Terminal Pretty
+#   B) Preferred Implementations
+#   C) Make Life Easier
+# 2. SSH & Remote Servers
+#   A) Server Variables
+# 3. Process Management
+#   A) Shortcuts
+# 4. Bioinformatics Software
+#   A) Softwares & Tools
+#   B) Add Softwares to Environment
+# 5. Programming Languages
+#   A) Python
+#   B) Java
+# ----------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------
+# 1. Customize Terminal
+# ----------------------------------------------------------------------------
+
+#   A) Make Terminal Pretty
+export PS1="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]\$ "
+export CLICOLOR=1
+export LSCOLORS=ExFxBxDxCxegedabagacad
+
+#   B) Preferred Implementations
+alias ls='ls -GFhltr'
+alias less='less -FSRXc'
+
+#   C) Make Life Easier
+#   mans:   Search manpage given in agument '1' for term given in argument '2' (case insensitive)
+#           displays paginated result with colored search terms and two lines surrounding each hit.            Example: mans mplayer codec
+#   --------------------------------------------------------------------
+mans () {
+    man $1 | grep -iC2 --color=always $2 | less
+}
+
+#   showa: to remind yourself of an alias (given some part of it)
+#   ------------------------------------------------------------
+showa () { /usr/bin/grep --color=always -i -a1 $@ ~/Library/init/bash/aliases.bash | grep -v '^\s*$' | less -FSRXc ; }
+
+#   extract:  Extract most known archives with one command
+#   ---------------------------------------------------------
+extract () {
+    if [ -f $1 ] ; then
+      case $1 in
+        *.tar.bz2)   tar xjf $1     ;;
+        *.tar.gz)    tar xzf $1     ;;
+        *.bz2)       bunzip2 $1     ;;
+        *.rar)       unrar e $1     ;;
+        *.gz)        gunzip $1      ;;
+        *.tar)       tar xf $1      ;;
+        *.tbz2)      tar xjf $1     ;;
+        *.tgz)       tar xzf $1     ;;
+        *.zip)       unzip $1       ;;
+        *.Z)         uncompress $1  ;;
+        *.7z)        7z x $1        ;;
+        *)     echo "'$1' cannot be extracted via extract()" ;;
+         esac
+     else
+         echo "'$1' is not a valid file"
+     fi
+}
+
+# ----------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------
+# 2. SSH & Remote Servers
+# ----------------------------------------------------------------------------
+
+#   A) Server Variables
+#      Usage Examples: ssh c1
+#                      scp ld1:/path/to/file ld2:path/to/destination
+
+export c1='paularestrepo@login3.colonialone.gwu.edu'       # GWU Colonial One
+export ld1='prestrepo@c2b2ysld1.c2b2.columbia.edu'         # CUMC Shen Lab - LD1
+export ld2='prestrepo@c2b2ysld2.c2b2.columbia.edu'         # CUMC Shen Lab - LD2
+export biocluster='prestrepo@biocluster.c2b2.columbia.edu' # CUMC Shen Lab - BioCluster HPC
+
+
+#   B) Biocluster Settings
+
+# Get the aliases and functions
+# if [ -f ~/.bashrc ]; then
+#         . ~/.bashrc
+# fi
+
+
+# User specific environment and startup programs
+# PATH=$PATH:$HOME/bin
+# PATH=$PATH:/home/yufengshen/bin
+# export PATH
+
+
+# ----------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------
+# 3. Process Management
+# ----------------------------------------------------------------------------
+
+#   A) Shortcuts
+#   findPid: find out the pid of a specified process
+#   -----------------------------------------------------
+#       Note that the command name can be specified via a regex
+#       E.g. findPid '/d$/' finds pids of all processes with names ending in 'd'
+#       Without the 'sudo' it will only find processes of the current user
+#   -----------------------------------------------------
+findPid () { lsof -t -c "$@" ; }
+
+#   memHogsTop, memHogsPs:  Find memory hogs
+#   -----------------------------------------------------
+alias memHogsTop='top -l 1 -o rsize | head -20'
+alias memHogsPs='ps wwaxm -o pid,stat,vsize,rss,time,command | head -10'
+
+#   cpuHogs:  Find CPU hogs
+#   -----------------------------------------------------
+alias cpu_hogs='ps wwaxr -o pid,stat,%cpu,time,command | head -10'
+
+#   topForever:  Continual 'top' listing (every 10 seconds)
+#   -----------------------------------------------------
+alias topForever='top -l 9999999 -s 10 -o cpu'
+
+#   ttop:  Recommended 'top' invocation to minimize resources
+#   ------------------------------------------------------------
+#       Taken from this macosxhints article
+#       http://www.macosxhints.com/article.php?story=20060816123853639
+#   ------------------------------------------------------------
+alias ttop="top -R -F -s 10 -o rsize"
+
+#   my_ps: List processes owned by my user:
+#   ------------------------------------------------------------
+my_ps() { ps $@ -u $USER -o pid,%cpu,%mem,start,time,bsdtime,command ; }
+
+# ----------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------
+# 4. Bioinformatics Software
+# ----------------------------------------------------------------------------
+
+#   A) Softwares & Tools
+BWA_PATH=${HOME}/bin/bwa-0.7.17 # Burrows Wheeler Aligner
+PICARD=${HOME}/bin/picard.jar  # Picard tools v2.16.0
+GATK=${HOME}/bin/GenomeAnalysisTK-3.8-0-ge9d806836/GenomeAnalysisTK.jar  # GATK v3.8.0
+
+#   B) Add Softwares to Environment
+export PICARD
+export GATK
+export PATH=$PATH:$BWA_PATH
+
+# ----------------------------------------------------------------------------
+# 5. Programming Languages
+# ----------------------------------------------------------------------------
+
+#   A) Python
+#   added by Anaconda2 5.0.1 installer
+export PATH="/Users/paula/anaconda2/bin:$PATH"
+
+#   B) Java
+export _JAVA_OPTIONS='-Xmx1024m'
