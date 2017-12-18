@@ -153,13 +153,20 @@ my_ps() { ps $@ -u $USER -o pid,%cpu,%mem,start,time,bsdtime,command ; }
 
 #   A) Softwares & Tools
 BWA_PATH=${HOME}/bin/bwa-0.7.17 # Burrows Wheeler Aligner
+SAMTOOLS_PATH=${HOME}/bin/samtools-1.6
+BCFTOOLS_PATH=${HOME}/bin/bcftools-1.6
+HTSLIB_PATH=${HOME}/bin/htslib-1.6
 PICARD=${HOME}/bin/picard.jar  # Picard tools v2.16.0
-GATK=${HOME}/bin/GenomeAnalysisTK-3.8-0-ge9d806836/GenomeAnalysisTK.jar  # GATK v3.8.0
+GATK=${HOME}/bin/GenomeAnalysisTK-3.8-0.jar  # GATK v3.8.0
+CIRCOS=${HOME}/bin/circos/current
 
 #   B) Add Softwares to Environment
 export PICARD
 export GATK
-export PATH=$PATH:$BWA_PATH
+#PATH=$PATH:CIRCOS
+export PATH=$PATH:$BWA_PATH:$SAMTOOLS_PATH:$BCFTOOLS_PATH:$HTSLIB_PATH
+
+
 
 # ----------------------------------------------------------------------------
 # 5. Programming Languages
@@ -170,4 +177,8 @@ export PATH=$PATH:$BWA_PATH
 export PATH="/Users/paula/anaconda2/bin:$PATH"
 
 #   B) Java
+export _JAVA_OPTIONS='-Xmx1024m'
+
+export JAVA_HOME=$HOME/bin/java/jdk1.8.0_151/bin
+export PATH=$HOME/bin/java/jdk1.8.0_151/bin:$PATH
 export _JAVA_OPTIONS='-Xmx1024m'
