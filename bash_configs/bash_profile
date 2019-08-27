@@ -64,14 +64,6 @@ extract () {
 # SSH & Remote Servers
 # ----------------------------------------------------------------------------
 
-
-alias c1='ssh paularestrepo@login3.colonialone.gwu.edu'       # GWU Colonial One
-alias minerva="ssh restrp01@minerva.hpc.mssm.edu"             # Mount Sinai
-
-
-# sshfs mount commands
-alias mssmount="sshfs restrp01@minerva.hpc.mssm.edu:/sc/orga/projects ~/Minerva"
-
 # ----------------------------------------------------------------------------
 
 
